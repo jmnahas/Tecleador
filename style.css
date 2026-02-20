@@ -9,7 +9,7 @@ html, body{
     height: 100%;
 }
 body{
-    background-color: #E8C86B;
+    background-color: #E8C86B !important;
     display: flex;
     flex-direction: column;
 }
@@ -56,9 +56,67 @@ main{
     align-items: center;
     padding-top: 60px;
 }
-#Tecleo{
+.contenedor-principal{
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    gap: 40px;
+
+    width: 100%;
+}
+
+.zona-tecleo{
+
+    background: #e5e5e5;
+    border: 2px solid #bdbdbd;
+
+    padding: 40px;
+
+    max-width: 800px;
+}
+
+.zona-estadisticas{
+
+    background: #e5e5e5;
+    border: 2px solid #bdbdbd;
+
+    padding: 20px;
+
+    min-width: 200px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.correcta {
+  background-color: #d4edda;
+  color: #2e7d32;
+  border-radius: 4px;
+}
+
+.incorrecta {
+  background-color: #f8d7da;
+  color: #c62828;
+  border-radius: 4px;
+}
+
+.cursor {
+  border-bottom: 3px solid #1976d2;
+}
+
+.stat{
+
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 18px;
+}
+#principal{
     background-color: white;
-    width: 800px;
+    width: 1200px;
     max-width: 90%;
     padding: 30px;
     border: 2px solid #d0d0d0;
@@ -67,17 +125,30 @@ main{
 }
 #texto{
     font-family: "Montserrat", sans-serif;
-
     font-size: 28px;
-
     line-height: 1.6;
-
     letter-spacing: 1px;
-
     color: #333;
 }
 
+.botones{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
 
+.btn{
+    display: flex;
+    justify-content: center;
+}
+.zona-texto {
+  font-family: "Roboto Mono", monospace;
+  font-size: 26px;
+  line-height: 42px;
+  height: 180px;
+  overflow: hidden;
+  white-space: pre-wrap;
+}
 
 
 
