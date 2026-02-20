@@ -4,8 +4,14 @@
   margin: 0;
   padding: 0;
 }
+
+html, body{
+    height: 100%;
+}
 body{
     background-color: #E8C86B;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
@@ -44,13 +50,51 @@ header{
 
 /* Parte principal */
 main{
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    padding-top: 60px;
+}
+#Tecleo{
     background-color: white;
-    margin: 20px;
-    padding: 20px;
+    width: 800px;
+    max-width: 90%;
+    padding: 30px;
+    border: 2px solid #d0d0d0;
+    border-radius: 2px;
+    text-align: left;
+}
+#texto{
     font-family: "Montserrat", sans-serif;
-    font-weight: 350;
+
+    font-size: 28px;
+
+    line-height: 1.6;
+
+    letter-spacing: 1px;
+
+    color: #333;
 }
 
+
+
+
+
+/*Footer*/
+footer{
+    margin-top: 60px;
+    padding: 20px;
+
+    text-align: center;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+
+    color: #444;
+
+    background-color: #C9A227;
+}
 
 
 /* Fuentes */
