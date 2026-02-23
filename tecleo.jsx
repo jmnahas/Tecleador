@@ -1,4 +1,3 @@
-
 const { useState, useEffect } = React;
 
 function Principal() {
@@ -16,31 +15,24 @@ function Principal() {
 
     const [mostrarDificultad, setMostrarDificultad] = useState(true);
 
+    const [finalizado, setFinalizado] = useState(false);
 
-    // ---------- GENERADOR DE TEXTO ----------
+
+    // ---------- GENERADOR ----------
     const palabras = [
-    "sol","mar","pan","voz","red","fin","luz","día","mes","uno","dos","tres","pez","rio","sur","norte",
-    "casa","mesa","auto","calle","libro","tecla","raton","mouse","nivel","parte","forma","mundo","tiempo",
-    "persona","grupo","lado","mano","ojos","datos","texto","campo","punto","linea","orden","valor",
-    "teclado","pantalla","codigo","archivo","carpeta","ventana","sistema","usuario","control",
-    "acceso","pagina","inicio","cierre","cambio","entrada","salida","carga","memoria",
-    "proceso","evento","estado","funcion","variable","objeto","clase","metodo",
-    "computadora","aplicacion","desarrollo","programacion","velocidad","precision","practica",
-    "ejercicio","concentracion","productividad","experiencia","herramienta",
-    "implementacion","configuracion","documentacion","optimizacion",
-    "javascript","typescript","estructura","algoritmo","interfaz","frontend","backend",
-    "servidor","cliente","navegador","internet","protocolo","conexion",
-    "repositorio","version","controlador","componente","framework",
-    "responsabilidad","modularidad","compatibilidad","escalabilidad",
-    "mantenibilidad","interactividad","funcionalidad","asincronico",
-    "sincronizacion","renderizado","actualizacion","procesamiento",
-    "rapido","lento","correcto","incorrecto","intento","resultado",
-    "objetivo","mejorar","aprender","practicar","escribir","teclear",
-    "palabra","frase","letra","tecla","espacio","error","acierto",
-    "progreso","nivel","desafio","ejemplo","prueba","ejecucion",
-    "internacional","caracteristica","especializacion","automatizacion",
-    "personalizacion","identificacion","visualizacion","comunicacion"
-];
+        "sol","mar","pan","voz","red","fin","luz","día","mes","uno","dos","tres",
+        "casa","mesa","auto","calle","libro","tecla","raton","mouse","nivel","parte",
+        "persona","grupo","lado","mano","ojos","datos","texto","campo","punto","linea",
+        "teclado","pantalla","codigo","archivo","ventana","sistema","usuario",
+        "memoria","proceso","evento","estado","funcion","variable","objeto",
+        "computadora","aplicacion","desarrollo","programacion","velocidad",
+        "precision","practica","javascript","typescript","estructura","algoritmo",
+        "frontend","backend","servidor","cliente","navegador","internet",
+        "rapido","lento","correcto","incorrecto","resultado",
+        "objetivo","mejorar","aprender","practicar","escribir","teclear",
+        "palabra","frase","letra","espacio","error","acierto",
+        "progreso","nivel","desafio","ejemplo","prueba","ejecucion"
+    ];
 
 
     function generarTexto(cantidad) {
@@ -56,148 +48,272 @@ function Principal() {
         }
 
         setTexto(resultado.trim());
+
         setInput("");
         setTiempo(0);
         setPPM(0);
         setErrores(0);
+
         setCorriendo(false);
+        setFinalizado(false);
     }
 
 
     // ---------- DIFICULTADES ----------
+
     function dificultadFacil() {
         generarTexto(15);
-        setDificultad("facil");
         setMostrarDificultad(false);
     }
 
     function dificultadMedia() {
         generarTexto(30);
-        setDificultad("media");
         setMostrarDificultad(false);
     }
 
     function dificultadDificil() {
         generarTexto(60);
-        setDificultad("dificil");
         setMostrarDificultad(false);
     }
 
     function cambiarDificultad() {
+
         setMostrarDificultad(true);
+
+        setTexto("");
+        setInput("");
+
+        setTiempo(0);
+        setPPM(0);
+        setErrores(0);
+
+        setCorriendo(false);
+        setFinalizado(false);
     }
 
 
     // ---------- TIMER ----------
+
     useEffect(() => {
 
-        let intervalo;
+        if (!corriendo) return;
 
-        if (corriendo) {
+        const intervalo = setInterval(() => {
 
-            intervalo = setInterval(() => {
-                setTiempo(prev => prev + 1);
-            }, 1000);
+            setTiempo(prev => prev + 1);
 
-        }
+        }, 1000);
 
         return () => clearInterval(intervalo);
 
     }, [corriendo]);
 
-    function calcularErrores(valor) {
-        let erroresContados = 0;
-        for (let i = 0; i < valor.length; i++) {
-            if (valor[i] !== texto[i]) {
-                erroresContados++;
-            }
-        }
-        setErrores(erroresContados);
-    }
 
-
-    function calcularPPM(valor) {
-        if (tiempo === 0) return;
-        const palabrasEscritas = valor.trim().split(" ").length;
-        const minutos = tiempo / 60;
-        const resultado = Math.round(palabrasEscritas / minutos);
-        setPPM(resultado);
-    }
+    // ---------- ERRORES Y PPM ----------
 
     useEffect(() => {
 
-    function manejarTecla(e) {
+        if (!corriendo) return;
 
-        if (mostrarDificultad) return;
+        let erroresContados = 0;
+        let correctos = 0;
 
-        const tecla = e.key;
+        for (let i = 0; i < input.length; i++) {
 
-        // ignorar teclas raras
-        if (tecla.length > 1 && tecla !== "Backspace") return;
+            if (input[i] !== texto[i]) {
 
-        if (!corriendo) setCorriendo(true);
+                erroresContados++;
 
-        setInput(prev => {
+            } else {
 
-        if (tecla === "Backspace") {
-            return prev.slice(0, -1);
+                correctos++;
+            }
         }
 
-        return prev + tecla;
-        });
+        setErrores(erroresContados);
 
+        if (tiempo > 0) {
+
+            const minutos = tiempo / 60;
+            const palabras = correctos / 5;
+
+            setPPM(Math.round(palabras / minutos));
+        }
+
+
+        // FINALIZAR
+
+        if (input.length >= texto.length) {
+
+            setCorriendo(false);
+            setFinalizado(true);
+        }
+
+    }, [input]);
+
+
+    // ---------- TECLADO ----------
+
+    useEffect(() => {
+
+        function manejarTecla(e) {
+
+            if (mostrarDificultad) return;
+            if (finalizado) return;
+
+            const tecla = e.key;
+
+            if (tecla.length > 1 && tecla !== "Backspace") return;
+
+            if (!corriendo) setCorriendo(true);
+
+            setInput(prev => {
+
+                if (tecla === "Backspace") {
+
+                    return prev.slice(0, -1);
+                }
+
+                if (prev.length >= texto.length) return prev;
+
+                return prev + tecla;
+            });
+        }
+
+        window.addEventListener("keydown", manejarTecla);
+
+        return () =>
+            window.removeEventListener("keydown", manejarTecla);
+
+    }, [mostrarDificultad, corriendo, finalizado, texto]);
+
+
+    // ---------- PANTALLA FINAL ----------
+
+    if (finalizado) {
+
+        return (
+
+            <div className="container text-center mt-5">
+
+                <div className="card p-5">
+
+                    <h2>Resultado</h2>
+
+                    <p>Tiempo: {tiempo} segundos</p>
+
+                    <p>PPM: {ppm}</p>
+
+                    <p>Errores: {errores}</p>
+
+                    <button
+                        className="btn btn-primary mt-3"
+                        onClick={cambiarDificultad}
+                    >
+                        Volver a jugar
+                    </button>
+
+                </div>
+
+            </div>
+        );
     }
 
-    window.addEventListener("keydown", manejarTecla);
 
-    return () => window.removeEventListener("keydown", manejarTecla);
+    // ---------- UI PRINCIPAL ----------
 
-    }, [mostrarDificultad, corriendo]);
     return (
 
         <div className="container mt-5">
 
             {mostrarDificultad && (
-                <div className="text-center mb-4">
+
+                <div className="text-center">
+
                     <h3>Elegir dificultad</h3>
-                    <button className="btn btn-success m-2" onClick={dificultadFacil}>Fácil</button>
-                    <button className="btn btn-warning m-2" onClick={dificultadMedia}>Media</button>
-                    <button className="btn btn-danger m-2" onClick={dificultadDificil}>Difícil</button>
+
+                    <button className="btn btn-success m-2"
+                        onClick={dificultadFacil}>
+                        Fácil
+                    </button>
+
+                    <button className="btn btn-warning m-2"
+                        onClick={dificultadMedia}>
+                        Media
+                    </button>
+
+                    <button className="btn btn-danger m-2"
+                        onClick={dificultadDificil}>
+                        Difícil
+                    </button>
+
                 </div>
             )}
 
+
             {!mostrarDificultad && (
-                <div className="row justify-content-center">
+
+                <div className="row">
+
                     <div className="col-md-8">
+
                         <div className="card p-4">
+
                             <p className="zona-texto">
-                            {texto.split("").map((letra, index) => {
 
-                                let clase = "letra";
+                                {texto.split("").map((letra, index) => {
 
-                                if (index < input.length) {
-                                clase += letra === input[index] ? " correcta" : " incorrecta";
-                                }
+                                    let clase = "letra";
 
-                                return (
-                                <span key={index} className={clase}>
-                                    {letra}
-                                </span>
-                                );
-                            })}
+                                    if (index < input.length) {
+
+                                        clase += letra === input[index]
+                                            ? " correcta"
+                                            : " incorrecta";
+                                    }
+
+                                    if (index === input.length) {
+
+                                        clase += " current-letter";
+                                    }
+
+                                    return (
+                                        <span key={index} className={clase}>
+                                            {letra}
+                                        </span>
+                                    );
+                                })}
+
                             </p>
-                            <button className="btn btn-primary mt-3" onClick={cambiarDificultad}>Cambiar dificultad</button>
+
+                            <button
+                                className="btn btn-primary mt-3"
+                                onClick={cambiarDificultad}
+                            >
+                                Cambiar dificultad
+                            </button>
+
                         </div>
+
                     </div>
 
-                    <div className="col-md-3">
+
+                    <div className="col-md-4">
+
                         <div className="card p-3">
+
                             <h5>Estadísticas</h5>
+
                             <p>Tiempo: {tiempo}s</p>
+
                             <p>PPM: {ppm}</p>
+
                             <p>Errores: {errores}</p>
+
                         </div>
+
                     </div>
+
                 </div>
             )}
 
@@ -205,8 +321,9 @@ function Principal() {
     );
 }
 
+
 const root = ReactDOM.createRoot(
-  document.getElementById("Principal")
+    document.getElementById("Principal")
 );
 
 root.render(<Principal />);
